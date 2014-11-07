@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+  <h:head>
+    <title>Calculator</title>
+  </h:head>
+    <h:body>
+        <h:outputText value="* Project - JSF Tabulating Calculator"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Class: CMSC 495 Current Trends and Projects in Computer Science"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Instructor: Nicholas Duchon - Nicholas.Duchon@umuc.edu"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Team: TeAmazing"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Dates of Project: 10/27/2014 - "/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Description: Project - JSF Tabulating Calculator"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Platform:  Netbeans IDE 7.4"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="* Due:"/>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        <h:form>
+            <h:panelGrid columns="2" border="1">
+
+
+                <h:panelGroup> 
+                    <h:panelGrid columns="1" border="1" >                   
+                        <h:panelGroup>
+                            <h:inputText id="display1InputText" size ="20"
+                                     style="text-align: right" 
+                                     readonly="true"
+                                     value="#{controls.display1}"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:inputText id="display2InputText" size ="20"
+                                     style="text-align: right"
+                                     readonly="false"
+                                     value="#{controls.display2}"/>
+                        </h:panelGroup>            
+                        <h:panelGroup>
+                            <h:commandButton value="Del" style="width:40px;"
+                                             action ="#{controls.del}"/>
+                            <h:commandButton value="Clr" style="width:40px;"
+                                              action ="#{controls.clear}"/>
+                            <h:commandButton value="ClrAll" style="width:40px;"
+                                              action ="#{controls.clearAll}"/>
+                            <h:commandButton value="+/-" style="width:40px;"
+                                             action ="#{controls.flip}"/>
+                            <h:commandButton value="UP" style="width:40px;"
+                                             action ="#{controls.moveUp}"/>                        
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:commandButton value="7" style="width:40px;"
+                                             action ="#{controls.seven}"/>
+                            <h:commandButton value="8" style="width:40px;"
+                                             action ="#{controls.eight}"/>
+                            <h:commandButton value="9" style="width:40px;"
+                                            action ="#{controls.nine}"/>
+                            <h:commandButton value="+" style="width:40px;"
+                                             action ="#{controls.add}"/>
+                            <h:commandButton value="DN" style="width:40px;"
+                                             action ="#{controls.moveDown}"/>                            
+
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:commandButton value="4" style="width:40px;"
+                                             action ="#{controls.four}"/>
+                            <h:commandButton value="5" style="width:40px;"
+                                              action ="#{controls.five}"/>
+                            <h:commandButton value="6" style="width:40px;"
+                                             action ="#{controls.six}"/>
+                            <h:commandButton value="-" style="width:40px;"
+                                            action ="#{controls.subtract}"/>
+                            <h:commandButton value="SV" style="width:40px;"
+                                             action ="#{controls.saveIt}"/>
+
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:commandButton value="1" style="width:40px;"
+                                             action ="#{controls.one}"/>
+                            <h:commandButton value="2" style="width:40px;"
+                                              action ="#{controls.two}"/>
+                            <h:commandButton value="3" style="width:40px;"
+                                             action ="#{controls.three}"/>
+                            <h:commandButton value="*" style="width:40px;"
+                                             action ="#{controls.multiply}"/>
+                            <h:commandButton value="LD" style="width:40px;"
+                                              action ="#{controls.loadIt}"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:commandButton value="0" style="width:40px;"
+                                             action ="#{controls.zero}"/>
+                            <h:commandButton value="." style="width:40px;"
+                                              action ="#{controls.decim}"/>
+                            <h:commandButton value="=" style="width:40px;"
+                                             action ="#{controls.equl}"/>
+                            <h:commandButton value="/" style="width:40px;"
+                                             action ="#{controls.divide}"/>
+                            <h:commandButton value="NE" style="width:40px;"
+                                              action ="#{controls.newEntry}"/>
+
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:inputText id="displayMessageText" size ="20"
+                                     style="text-align: left" 
+                                     readonly="true"
+                                     value="#{controls.message}"/>
+                        </h:panelGroup>
+                    </h:panelGrid>                    
+                </h:panelGroup>  
+
+                <h:panelGroup>
+                    <h:inputTextarea cols="100" 
+                                     id="outputDisplayArea" 
+                                     readonly="true" 
+                                     rows="15"  
+                                     label="Tabulation" 
+                                     value="#{controls.outputDisplayArea}"/>
+
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
