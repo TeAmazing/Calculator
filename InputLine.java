@@ -1,8 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+ * Class: CMSC 495 Current Trends and Projects in Computer Science
+ * Instructor: Nicholas Duchon - Nicholas.Duchon@umuc.edu
+ * Coder: Kaigh Taylor
+ * Team: TeAmazing
+ * Date of Coding: 10/27/2014
+ * Description: Project - JSF Tabulating Calculator
+ * Platform:  Netbeans IDE 7.4
+ * Due: 
+ * I pledge that I have completed the programming assignment
+   with the assistance of TeAmazing members.
+   This code has been developed for our team alone.
+   Print your Name here: Kaigh Taylor, TeAmazing Lead Programmer
+*/
 
 package JustJava;
 
