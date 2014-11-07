@@ -149,11 +149,12 @@ public class Controls
         String tempSign ="";
         for(InputLine lineEntry : fullDisplay) 
         {   
+            //This catches the divide by Zero Error and resets equation
             if (tempSign.equals("/") && (Double.parseDouble(lineEntry.getOperand())==0))
             {
                 setMessage("DIVIDE BY ZERO");
-                outputLines.clear();
-                completEquation = false;
+                //outputLines.clear();
+                completEquation = true;
                 break;
              }
             temp += "\t";
@@ -177,11 +178,13 @@ public class Controls
         if(Double.parseDouble(unSign)<0)
         {
            realSign = "(0-" + (unSign.substring(1)) + ")";
+           // DEBUG Output
            System.out.println("This is the realSign value: " + realSign);
         }
         else
             realSign = unSign;
         
+           // DEBUG Output
         System.out.println("This is the unSign value: " + unSign);
         return realSign; 
     }
@@ -196,6 +199,7 @@ public class Controls
         }
         
         this.strEquation = ("0+"+temp);
+           // DEBUG Output
         System.out.println("This is the equation value: " +strEquation);
     }
     
@@ -217,11 +221,14 @@ public class Controls
         {
             str = str.substring(0, str.length()-1);
         }
+        if (str.length()== 0)
+            str = "0";
       return str;
     }
     
     public void resetDisplays()
     {
+        // After every operand is entered the display is reset
         currentDisplay = "0";            
         setDisplay1(currentDisplay);
         setDisplay2("");
@@ -241,14 +248,20 @@ public class Controls
      {
          // This needs to clear the current textbox being input in. 
          // Clear All will clear the entire equation - with Warning Dialogue
+         
+         if (completEquation)
+         {
+             clearAll();
+             return;
+         }
          currentDisplay="0";
          
          // CHANGE NEEDED - Determine which textbox is being worked on. 
          // Clear that box only. This may requiren a switch statement.
          setDisplay1(currentDisplay);
          setDisplay2("");
+         setMessage("");         
          completEquation = false;
-         setMessage("");
      }
      
      public void clearAll()
@@ -565,8 +578,8 @@ public class Controls
          strTemp += strResult;
          
          setDisplay1(strResult);
-         currentDisplay = strTemp;
-         setOutputDisplayArea(currentDisplay);
+         currentDisplay = strResult;
+         setOutputDisplayArea(strTemp);
          completEquation=true;             
 
      }
