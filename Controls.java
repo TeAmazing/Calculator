@@ -27,6 +27,10 @@ import java.util.Arrays; // The Arrays Library
 
 import JustJava.InputLine;
 import com.towel.math.Expression;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.context.FacesContext;
 
 //import Beans.OutputDisplay;
 
@@ -48,20 +52,21 @@ public class Controls
     
     private String currentDisplay;
     private String display1;
+    private String oldDisplay1; //Hold value for Edit Mode check
+    
     private String display2;
+    private String oldDisplay2; //Hold value for Edit Mode check
+    
+    private String strOperator; 
+    private String strOldOperator; //Hold value for Edit Mode check
+    
     private String message;
     private String strEquation;
-    private String intOperator;
-
-    private Double lastValue;
     private Double result;
     private Boolean completEquation; //Determines if equation has been completed
-    private int index;
-    
-
-
-
-    
+    private Boolean editMode; //This flag indicates if app is in edit mode
+    private int stepIndex; //This index holds the current location in the arrayList
+    private int endIndex; // This holds the last position in the index
     
     // Constructor
     public Controls() 
@@ -70,11 +75,14 @@ public class Controls
         currentDisplay = display1 = "0";
         display2="";
         strEquation ="0";
-        result = lastValue = 0.0;
-        completEquation=false;
-        //intOperator = 1; //ADD
         message = "";
-        index = 0;
+        result = 0.0;
+        
+        completEquation=false;
+        editMode=false;
+        
+        stepIndex = 0;
+        
     }
     
     // Get and Set Methods
@@ -82,11 +90,33 @@ public class Controls
     {
         return display1;
     }
-  
+
+    public String getOldDisplay1() 
+    {
+        return oldDisplay1;
+    }
+
     public String getDisplay2() 
     {
         return display2;
     }
+    
+    public String getOldDisplay2() 
+    {
+        return oldDisplay2;
+    }
+
+    public String getStrOperator() 
+    {
+        return strOperator;
+
+    }
+
+    public String getStrOldOperator() 
+    {
+        return strOldOperator;
+    }
+
     public String getOutputDisplayArea() 
     {
         return outputDisplayArea;
@@ -107,34 +137,33 @@ public class Controls
         return result;
     }
 
-    public String getIntOperator() 
+    public void setStrOperator(String strOperator) {
+        this.strOperator = strOperator;
+    }
+    
+    public void setStrOldOperator(String strOldOperator) 
     {
-        return intOperator;
-
+        this.strOldOperator = strOldOperator;
     }
-
-    public Double getLastValue() {
-        return lastValue;
-    }
-
-    
-    public void setLastValue(Double lastValue) {
-        this.lastValue = lastValue;
-    }
-
-    public void setIntOperator(String intOperator) {
-        this.intOperator = intOperator;
-    }
-    
   
     public void setDisplay1(String number1) 
     {
         this.display1 = number1;
     }
   
+    public void setOldDisplay1(String oldDisplay1) 
+    {
+        this.oldDisplay1 = oldDisplay1;
+    }
+
     public void setDisplay2(String comment) 
     {
         this.display2 = comment;
+    }
+
+    public void setOldDisplay2(String oldDisplay2) 
+    {
+        this.oldDisplay2 = oldDisplay2;
     }
 
     public void setOutputDisplayArea(String outputDisplayArea) 
@@ -144,29 +173,81 @@ public class Controls
     
     public void setOutputDisplayArea(ArrayList<InputLine>  fullDisplay) 
     {
-        //this.outputDisplayArea.add(fullDisplay);
         String temp="";
         String tempSign ="";
-        for(InputLine lineEntry : fullDisplay) 
-        {   
-            //This catches the divide by Zero Error and resets equation
-            if (tempSign.equals("/") && (Double.parseDouble(lineEntry.getOperand())==0))
+        
+        if (!editMode)
+        {        
+        //this.outputDisplayArea.add(fullDisplay);
+
+            for(InputLine lineEntry : fullDisplay) 
+            {   
+                //This catches the divide by Zero Error and resets equation
+                if (tempSign.equals("/") && (Double.parseDouble(lineEntry.getOperand())==0))
+                {
+                    setMessage("DIVIDE BY ZERO");
+                    //outputLines.clear();
+                    completEquation = true;
+                    break;
+                 }
+                temp += "\t";
+                temp += lineEntry.getOperand();
+                temp += "\t";
+                temp += (lineEntry.getComments());
+                temp += "\r";           
+                temp += (lineEntry.getOperator());
+                //tempSign = (lineEntry.getOperator());
+            }
+            this.outputDisplayArea = temp; 
+            stepIndex = 0;
+            endIndex = fullDisplay.size()-1;
+
+        }
+        else    //EDIT MODE TRUE
+        {
+            String tempDisplay1 = "";
+            String tempDisplay2 = "";
+            String tempOp = "";
+            //InputLine lineEntry = fullDisplay.get(stepIndex);
+            for (int i = 0; i < fullDisplay.size(); i++) 
             {
-                setMessage("DIVIDE BY ZERO");
-                //outputLines.clear();
-                completEquation = true;
-                break;
-             }
-            temp += "\t";
-            temp += lineEntry.getOperand();
-            temp += "\t";
-            temp += (lineEntry.getComments());
-            temp += "\r";           
-            temp += (lineEntry.getOperator());
-            tempSign = (lineEntry.getOperator());
+                if (stepIndex == i)
+                {
+                    temp += ">";
+                    tempDisplay1 = (fullDisplay.get(stepIndex).getOperand());
+                    currentDisplay = (fullDisplay.get(stepIndex).getOperand());
+                    tempOp = (fullDisplay.get(stepIndex).getOperator());
+                    tempDisplay2 = (fullDisplay.get(stepIndex).getComments());
+                }
+                
+                temp += "\t";
+                temp += (fullDisplay.get(i).getOperand());
+                temp += "\t";
+                temp += (fullDisplay.get(i).getOperator());
+                temp += "\t";
+                temp += (fullDisplay.get(i).getComments());
+                temp += "\r";
+                
+                //tempSign = (fullDisplay.get(i).getOperator());
+            }
+                setDisplay1(tempDisplay1);
+                // DEBUG Output
+                System.out.println("EditMode DP1 value: " + tempDisplay1);
+                
+                setDisplay2(tempDisplay2);
+                // DEBUG Output
+                System.out.println("EditMode comments value: " + tempDisplay2);
+                
+                setStrOperator(tempOp);
+                setMessage(tempOp);
+                // DEBUG Output
+                System.out.println("EditMode message value: " + tempOp);
+                
+            this.outputDisplayArea = "EDIT MODE" + "\r" + temp;            
+           
         }
         
-        this.outputDisplayArea = temp;
+
 
     }
     
@@ -191,14 +272,14 @@ public class Controls
 
     public void setStrEquation(ArrayList<InputLine>  fullDisplay)
     {
-        String temp="";
+        String tempEquat="";
         for(InputLine lineEntry : fullDisplay) 
         {
-            temp += signCheck(lineEntry.getOperand());
-            temp += (lineEntry.getOperator());
+            tempEquat += signCheck(lineEntry.getOperand());
+            tempEquat += (lineEntry.getOperator());
         }
         
-        this.strEquation = ("0+"+temp);
+        this.strEquation = ("0+"+tempEquat);
            // DEBUG Output
         System.out.println("This is the equation value: " +strEquation);
     }
@@ -232,9 +313,12 @@ public class Controls
         currentDisplay = "0";            
         setDisplay1(currentDisplay);
         setDisplay2("");
-        setIntOperator("");
+        setStrOperator("");
+        setMessage("");
         
     }
+    
+    
 // ---------------------------------------------
 //   Methods below are calculator key methods    
     public void del()
@@ -275,9 +359,13 @@ public class Controls
          setDisplay1(currentDisplay);
          setDisplay2("");
          setMessage("");
+         setOldDisplay1("");
+         setOldDisplay2("");            
+         setStrOldOperator("");
          setOutputDisplayArea("");
-         intOperator = ""; //NULL
+         strOperator = ""; //NULL
          outputLines.clear();
+         editMode=false;
          completEquation=false;
      }
 
@@ -306,7 +394,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="7";
          else
              currentDisplay+="7";
@@ -318,7 +406,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
 
              currentDisplay="8";
          else
@@ -331,7 +419,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="9";
          else
              currentDisplay+="9";
@@ -343,7 +431,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="6";
          else
              currentDisplay+="6";
@@ -355,7 +443,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="5";
          else
              currentDisplay+="5";
@@ -367,7 +455,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="4";
          else
              currentDisplay+="4";
@@ -379,7 +467,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="3";
          else
              currentDisplay+="3";
@@ -391,7 +479,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="2";
          else
              currentDisplay+="2";
@@ -403,7 +491,7 @@ public class Controls
      {
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
-                 || completEquation)
+                 || ((completEquation) && (!editMode)))
              currentDisplay="1";
          else
              currentDisplay+="1";
@@ -416,7 +504,7 @@ public class Controls
          if (currentDisplay.equals("") || currentDisplay.isEmpty() 
                  || !currentDisplay.equals("0"))
                   currentDisplay+="0";
-         else if (currentDisplay.equals("NaN") || completEquation)
+         else if (currentDisplay.equals("NaN") || ((completEquation) && (!editMode)))
              currentDisplay = "0";
          setDisplay1(currentDisplay);
      }
@@ -442,89 +530,132 @@ public class Controls
      public void add() 
      {
         // If the previous calculation complete reset all
-        if (completEquation)
+        if ((completEquation) && (!editMode))
         {
             setMessage("Equation Reset");
             outputLines.clear();
             completEquation = false;
         }
                 
-        setIntOperator("+"); //ADD
+        setStrOperator("+"); //ADD
         
-        InputLine totalEntry = new InputLine(getDisplay1(),getIntOperator(),getDisplay2());
-        outputLines.add(totalEntry);
+        if (!editMode)
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.add(totalEntry);
 
-        setOutputDisplayArea(outputLines);
-        setStrEquation(outputLines);
+            setOutputDisplayArea(outputLines);
+            // ??? Is this necessary
+            // setStrEquation(outputLines);
 
-        index++;
-        setLastValue(Double.parseDouble(getDisplay1()));
-        resetDisplays();
+            resetDisplays();
+        }
+        else
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            setOutputDisplayArea(outputLines);            
+        }
 
      }
 
      public void subtract() 
      {
          
-        if (completEquation)
+        if ((completEquation)&& (!editMode))
         {
             setMessage("Equation Reset");
             outputLines.clear();
             completEquation = false;
         }
                 
-        setIntOperator("-"); //SUBTRACT
+        setStrOperator("-"); //SUBTRACT
         
-        InputLine totalEntry = new InputLine(getDisplay1(),getIntOperator(),getDisplay2());
-        outputLines.add(totalEntry);
-        setOutputDisplayArea(outputLines);
+        if (!editMode)
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.add(totalEntry);
+
+            setOutputDisplayArea(outputLines);
+            // ??? Is this necessary
+            // setStrEquation(outputLines);
         
-        index++;
-        setLastValue(Double.parseDouble(getDisplay1()));
-        resetDisplays();
+            resetDisplays();
+            
+        }
+        else
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            setOutputDisplayArea(outputLines);            
+        }
 
      }
 
      public void multiply() 
      {
          
-        if (completEquation)
+        if ((completEquation)&& (!editMode))
         {
             setMessage("Equation Reset");
             outputLines.clear();
             completEquation = false;
         }
                 
-        setIntOperator("*"); //MULTIPLY
+        setStrOperator("*"); //MULTIPLY
         
-        InputLine totalEntry = new InputLine(getDisplay1(),getIntOperator(),getDisplay2());
-        outputLines.add(totalEntry);
-        setOutputDisplayArea(outputLines);
+        if (!editMode)
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.add(totalEntry);
 
-        index++;
-        resetDisplays();
+            setOutputDisplayArea(outputLines);
+            // ??? Is this necessary
+            // setStrEquation(outputLines);
+            resetDisplays();
+            
+        }
+        else
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            setOutputDisplayArea(outputLines);            
+        }
 
      }
 
      public void divide() 
      {
-        if (completEquation)
+        if ((completEquation)&& (!editMode))
         {
             setMessage("Equation Reset");
             outputLines.clear();
             completEquation = false;
         }
                 
-        setIntOperator("/"); //DIVIDE
+        setStrOperator("/"); //DIVIDE
         
         // The check divide by zero is not in effect yet!!
-        InputLine totalEntry = new InputLine(getDisplay1(),getIntOperator(),getDisplay2());
-        outputLines.add(totalEntry);
-        setOutputDisplayArea(outputLines);
+        if (!editMode)
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.add(totalEntry);
 
-        index++;
-        setLastValue(Double.parseDouble(getDisplay1()));
-        resetDisplays();
+            setOutputDisplayArea(outputLines);
+            // ??? Is this necessary
+           // setStrEquation(outputLines);
+            resetDisplays();
+        }
+        else
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            setOutputDisplayArea(outputLines);            
+        }
 
      }
      
@@ -545,14 +676,63 @@ public class Controls
      
      public void moveUp()
      {
-         
+        if (editMode)
+        {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            if (stepIndex >0)
+                 stepIndex--;
+        }
+
+        resetDisplays();
+        editMode = true;
+        setOutputDisplayArea(outputLines);
+            
      }
      
      public void moveDown()
      {
-         
+       if (editMode)
+        {
+           InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+           outputLines.set(stepIndex, totalEntry);
+
+           if (stepIndex < outputLines.size()-1)
+               stepIndex++;
+        }
+
+        resetDisplays();
+        editMode = true;
+        setOutputDisplayArea(outputLines);
+
+        // DEBUG Output
+        System.out.println("EditMode stepIndex value: " + stepIndex);
+        System.out.println("EditMode ArryayList size: " + outputLines.size());
+        
      }
      
+     public void newEntry()
+    {
+        editMode = false;
+        if (completEquation)
+            outputLines.remove(endIndex);
+        completEquation = false;
+        setOutputDisplayArea(outputLines);
+        resetDisplays();
+
+        currentDisplay = (getOldDisplay1());
+        setDisplay1 (currentDisplay);
+        setStrOperator (getStrOldOperator());
+        setDisplay2(outputLines.get(endIndex).getComments());
+
+        // DEBUG Output
+        //System.out.println("New Entry DP1: " + getDisplay1());
+        //System.out.println("New Entry DP2: " + getDisplay2());
+        //System.out.println("New Entry OP: " + getStrOperator());
+
+    }
+ 
      // Equl is the only way to apply the operator to the operands
      // Division by zero is not allowed.
      // After the operation, completEquation is set to false
@@ -560,27 +740,37 @@ public class Controls
      {
          // Equl uses the Expression class in Towel jar;
          // Expression can convert a string equation into a Double result
-         
-         String strTemp, strResult;
-         
-         InputLine totalEntry = new InputLine(getDisplay1(),getIntOperator(),getDisplay2());
-         outputLines.add(totalEntry);
+         // Equl not allowed in edit mode
+        if ((!completEquation) && (!editMode))
+        {
+            String strTemp, strResult;
 
-         setOutputDisplayArea(outputLines);
-         setStrEquation(outputLines);
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            setOldDisplay1(getDisplay1());
+            setOldDisplay2(getDisplay2());            
+            setStrOldOperator(getStrOperator());
+            
+            outputLines.add(totalEntry);
 
-         Expression exp = new Expression(getStrEquation());
-         setResult(exp.resolve());
-         strResult = String.valueOf(getResult());
-         
-         strTemp = getOutputDisplayArea();
-         strTemp += "=\t";
-         strTemp += strResult;
-         
-         setDisplay1(strResult);
-         currentDisplay = strResult;
-         setOutputDisplayArea(strTemp);
-         completEquation=true;             
+            setOutputDisplayArea(outputLines);
+
+            setStrEquation(outputLines);
+
+
+            Expression exp = new Expression(getStrEquation());
+            setResult(exp.resolve());
+            strResult = String.valueOf(getResult());
+
+            strTemp = getOutputDisplayArea();
+            strTemp += "=\t";
+            strTemp += strResult;
+
+            setDisplay1(strResult);
+            currentDisplay = strResult;
+
+            setOutputDisplayArea(strTemp);
+            completEquation=true;
+        }
 
      }
      
@@ -590,12 +780,15 @@ public class Controls
     }
     
     public void loadIt()
-    {
-        
+    {    // Currently, this does not work and throws an error. It is my first attpempt to LOAD a text file.
+        try 
+        {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/CalcTab.txt");
+        } 
+        catch (IOException ex) 
+        {
+            Logger.getLogger(Controls.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void newEntry()
-    {
-        
-    }
 }
