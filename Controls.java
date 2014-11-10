@@ -63,6 +63,8 @@ public class Controls
     private String message;
     private String strEquation;
     private Double result;
+    
+    private Boolean dblClear;
     private Boolean completEquation; //Determines if equation has been completed
     private Boolean editMode; //This flag indicates if app is in edit mode
     private int stepIndex; //This index holds the current location in the arrayList
@@ -78,6 +80,7 @@ public class Controls
         message = "";
         result = 0.0;
         
+        dblClear=false;
         completEquation=false;
         editMode=false;
         
@@ -175,6 +178,7 @@ public class Controls
     {
         String temp="";
         String tempSign ="";
+        String divOp = "";        
         
         if (!editMode)
         {        
@@ -182,21 +186,20 @@ public class Controls
 
             for(InputLine lineEntry : fullDisplay) 
             {   
-                //This catches the divide by Zero Error and resets equation
+                //This catches the divide by Zero Error and indicates in comments
                 if (tempSign.equals("/") && (Double.parseDouble(lineEntry.getOperand())==0))
                 {
-                    setMessage("DIVIDE BY ZERO");
-                    //outputLines.clear();
-                    completEquation = true;
-                    break;
+                     divOp = "DIVIDE BY ZERO - Infinity Result. ";
                  }
                 temp += "\t";
                 temp += lineEntry.getOperand();
                 temp += "\t";
-                temp += (lineEntry.getComments());
+                temp += divOp + (lineEntry.getComments());
                 temp += "\r";           
                 temp += (lineEntry.getOperator());
-                //tempSign = (lineEntry.getOperator());
+                //This is necessary to catch Divide by Zero 
+                tempSign = (lineEntry.getOperator());
+                divOp="";
             }
             this.outputDisplayArea = temp; 
             stepIndex = 0;
@@ -208,47 +211,49 @@ public class Controls
             String tempDisplay1 = "";
             String tempDisplay2 = "";
             String tempOp = "";
+
             //InputLine lineEntry = fullDisplay.get(stepIndex);
             for (int i = 0; i < fullDisplay.size(); i++) 
             {
                 if (stepIndex == i)
                 {
                     temp += ">";
-                    tempDisplay1 = (fullDisplay.get(stepIndex).getOperand());
-                    currentDisplay = (fullDisplay.get(stepIndex).getOperand());
-                    tempOp = (fullDisplay.get(stepIndex).getOperator());
-                    tempDisplay2 = (fullDisplay.get(stepIndex).getComments());
-                }
                 
+                    tempDisplay1 = (fullDisplay.get(stepIndex).getOperand());
+                    tempDisplay2 = (fullDisplay.get(stepIndex).getComments());
+                    currentDisplay = (tempDisplay1);
+                    tempOp = (fullDisplay.get(stepIndex).getOperator());
+                }
+               
+                if (tempSign.equals("/") && (Double.parseDouble(fullDisplay.get(i).getOperand())==0))
+                {   
+                    divOp = "DIVIDE BY ZERO - Infinity Result. ";
+
+                }
+               
                 temp += "\t";
                 temp += (fullDisplay.get(i).getOperand());
                 temp += "\t";
                 temp += (fullDisplay.get(i).getOperator());
                 temp += "\t";
-                temp += (fullDisplay.get(i).getComments());
+                temp += divOp + (fullDisplay.get(i).getComments());
                 temp += "\r";
                 
-                //tempSign = (fullDisplay.get(i).getOperator());
+                //This is necessary to catch Divide by Zero 
+                tempSign = (fullDisplay.get(i).getOperator());
+
+                divOp = "";
             }
                 setDisplay1(tempDisplay1);
-                // DEBUG Output
-                System.out.println("EditMode DP1 value: " + tempDisplay1);
-                
                 setDisplay2(tempDisplay2);
-                // DEBUG Output
-                System.out.println("EditMode comments value: " + tempDisplay2);
-                
                 setStrOperator(tempOp);
                 setMessage(tempOp);
-                // DEBUG Output
-                System.out.println("EditMode message value: " + tempOp);
                 
             this.outputDisplayArea = "EDIT MODE" + "\r" + temp;            
+            endIndex = fullDisplay.size()-1;
            
         }
         
-
-
     }
     
     public String signCheck(String unSign)
@@ -259,14 +264,10 @@ public class Controls
         if(Double.parseDouble(unSign)<0)
         {
            realSign = "(0-" + (unSign.substring(1)) + ")";
-           // DEBUG Output
-           System.out.println("This is the realSign value: " + realSign);
         }
         else
             realSign = unSign;
         
-           // DEBUG Output
-        System.out.println("This is the unSign value: " + unSign);
         return realSign; 
     }
 
@@ -280,8 +281,6 @@ public class Controls
         }
         
         this.strEquation = ("0+"+tempEquat);
-           // DEBUG Output
-        System.out.println("This is the equation value: " +strEquation);
     }
     
     public void setMessage(String msgtxt) 
@@ -323,6 +322,8 @@ public class Controls
 //   Methods below are calculator key methods    
     public void del()
      {
+        dblClear=false;
+
          currentDisplay = deleteString(currentDisplay);
          setDisplay1(currentDisplay);
      }
@@ -333,19 +334,53 @@ public class Controls
          // This needs to clear the current textbox being input in. 
          // Clear All will clear the entire equation - with Warning Dialogue
          
-         if (completEquation)
+         if ((completEquation) && (!editMode))
          {
              clearAll();
              return;
          }
+
          currentDisplay="0";
          
          // CHANGE NEEDED - Determine which textbox is being worked on. 
          // Clear that box only. This may requiren a switch statement.
          setDisplay1(currentDisplay);
          setDisplay2("");
-         setMessage("");         
-         completEquation = false;
+         if (!editMode)
+            setStrOperator("");
+         setMessage("");
+         
+         if (editMode)
+         {
+             //In editMode clicking clr button 2x in row will delete the current line
+            if (dblClear)
+            {
+                outputLines.remove(stepIndex);
+                if (stepIndex==endIndex)
+                {
+                    if (outputLines.isEmpty())
+                    {
+                        editMode=false;
+                        setOutputDisplayArea(outputLines);   
+                        dblClear=false;
+                        return;                    
+                    }
+                    endIndex = outputLines.size()-1;
+                    stepIndex = endIndex;
+                }
+                
+                setOutputDisplayArea(outputLines);   
+                dblClear=false;
+                return;
+            }
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);   
+            dblClear=true;
+            
+         }
+         
+         //completEquation = false;
      }
      
      public void clearAll()
@@ -358,6 +393,7 @@ public class Controls
          // Clear that box only. This may requiren a switch statement.
          setDisplay1(currentDisplay);
          setDisplay2("");
+         setStrOperator("");
          setMessage("");
          setOldDisplay1("");
          setOldDisplay2("");            
@@ -365,6 +401,7 @@ public class Controls
          setOutputDisplayArea("");
          strOperator = ""; //NULL
          outputLines.clear();
+         dblClear=false;
          editMode=false;
          completEquation=false;
      }
@@ -372,7 +409,7 @@ public class Controls
      // Flip value between positive and negative
      public void flip()
      {
-
+         dblClear=false;
          if (currentDisplay != null && !currentDisplay.isEmpty() 
                  && !currentDisplay.equals("0"))
          {
@@ -385,6 +422,18 @@ public class Controls
 
              setDisplay1(currentDisplay);
          }
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);    
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+          }
+         
      }
 
      // All number buttons check for leading zero; empty(ness)
@@ -392,18 +441,33 @@ public class Controls
      // The Nan issue should be obsolete
      public void seven()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="7";
          else
              currentDisplay+="7";
+
          setDisplay1(currentDisplay);
 
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
+         
      }
 
      public void eight()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
@@ -411,107 +475,233 @@ public class Controls
              currentDisplay="8";
          else
              currentDisplay+="8";
+
          setDisplay1(currentDisplay);
+
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+        }
 
      }
 
      public void nine()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="9";
          else
              currentDisplay+="9";
+
          setDisplay1(currentDisplay);
+         
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+        }
+         
 
      }
 
       public void six()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="6";
          else
              currentDisplay+="6";
+
          setDisplay1(currentDisplay);
 
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
      }
 
      public void five()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="5";
          else
              currentDisplay+="5";
+
          setDisplay1(currentDisplay);
+
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
 
      }
 
      public void four()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="4";
          else
              currentDisplay+="4";
+
          setDisplay1(currentDisplay);
+
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
 
      }
 
      public void three()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="3";
          else
              currentDisplay+="3";
+
          setDisplay1(currentDisplay);
 
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
+         
      }
 
      public void two()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="2";
          else
              currentDisplay+="2";
+
          setDisplay1(currentDisplay);
 
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
+         
      }
 
      public void one()
      {
+         dblClear=false;
          if (currentDisplay.equals("0") || currentDisplay.equals("") 
                  || currentDisplay==null || currentDisplay.equals("NaN")
                  || ((completEquation) && (!editMode)))
              currentDisplay="1";
          else
              currentDisplay+="1";
-         setDisplay1(currentDisplay);
+
+          setDisplay1(currentDisplay);
+
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+        if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
 
      }
 
      public void zero()
      {
+         dblClear=false;
          if (currentDisplay.equals("") || currentDisplay.isEmpty() 
                  || !currentDisplay.equals("0"))
                   currentDisplay+="0";
          else if (currentDisplay.equals("NaN") || ((completEquation) && (!editMode)))
              currentDisplay = "0";
          setDisplay1(currentDisplay);
+
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+        }
+         
      }
 
      // Add a decimal only if no decimal is in the string
      public void decim()
      {
+         dblClear=false;
          int count = 0;
          for(int i =0; i < currentDisplay.length(); i++)
              if(currentDisplay.charAt(i) == '.')
@@ -522,6 +712,18 @@ public class Controls
                  setDisplay1(currentDisplay);
          }
 
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
+
      }
 
      //The operator buttons move the operand  to 
@@ -529,6 +731,7 @@ public class Controls
      //They also display the operator value in the message bar
      public void add() 
      {
+         dblClear=false;
         // If the previous calculation complete reset all
         if ((completEquation) && (!editMode))
         {
@@ -552,6 +755,7 @@ public class Controls
         }
         else
         {
+            // If in edit mode commit changes to arraylist and display them
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
 
@@ -562,6 +766,7 @@ public class Controls
 
      public void subtract() 
      {
+         dblClear=false;
          
         if ((completEquation)&& (!editMode))
         {
@@ -586,6 +791,7 @@ public class Controls
         }
         else
         {
+            // If in edit mode commit changes to arraylist and display them
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
 
@@ -596,6 +802,7 @@ public class Controls
 
      public void multiply() 
      {
+         dblClear=false;
          
         if ((completEquation)&& (!editMode))
         {
@@ -608,6 +815,7 @@ public class Controls
         
         if (!editMode)
         {
+            // If in edit mode commit changes to arraylist and display them
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.add(totalEntry);
 
@@ -619,6 +827,7 @@ public class Controls
         }
         else
         {
+            // If in edit mode commit changes to arraylist and display them
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
 
@@ -629,6 +838,7 @@ public class Controls
 
      public void divide() 
      {
+         dblClear=false;
         if ((completEquation)&& (!editMode))
         {
             setMessage("Equation Reset");
@@ -651,6 +861,7 @@ public class Controls
         }
         else
         {
+            // If in edit mode commit changes to arraylist and display them
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
 
@@ -661,25 +872,34 @@ public class Controls
      
      public void squaroot()
      {
+         dblClear=false;
         // This is a holder for an expansion of this application          
      }
      
      public void percentOf()
      {
+         dblClear=false;
         // This is a holder for an expansion of this application          
      }
      
      public void fractionOf()
      {
+         dblClear=false;
         // This is a holder for an expansion of this application 
      }
      
      public void moveUp()
      {
+         dblClear=false;
         if (editMode)
         {
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay2(outputLines.get(endIndex).getComments());
+                
+            }
 
             if (stepIndex >0)
                  stepIndex--;
@@ -693,44 +913,74 @@ public class Controls
      
      public void moveDown()
      {
-       if (editMode)
-        {
-           InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-           outputLines.set(stepIndex, totalEntry);
+        dblClear=false;
+        if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            {
+                setOldDisplay2(outputLines.get(endIndex).getComments());
+                
+            }
 
-           if (stepIndex < outputLines.size()-1)
-               stepIndex++;
-        }
-
-        resetDisplays();
-        editMode = true;
-        setOutputDisplayArea(outputLines);
-
-        // DEBUG Output
-        System.out.println("EditMode stepIndex value: " + stepIndex);
-        System.out.println("EditMode ArryayList size: " + outputLines.size());
+            if (stepIndex < endIndex)
+                stepIndex++;
+         }
         
+         resetDisplays();
+         editMode = true;
+         setOutputDisplayArea(outputLines);
+
      }
      
      public void newEntry()
     {
-        editMode = false;
-        if (completEquation)
-            outputLines.remove(endIndex);
-        completEquation = false;
-        setOutputDisplayArea(outputLines);
-        resetDisplays();
+        dblClear=false;
+        if (editMode)
+        {
+            editMode = false;
+            // A check needs to be made to determine if editMode was entered
+            // from a completed equation. 
+            
+            if (completEquation)
+            {
+                completEquation = false;
+                // A completed equation can be determined by no operator being 
+                // in last index
+                if (outputLines.get(endIndex).getOperator().equals(""))
+                {
+                    outputLines.remove(endIndex);
+                    setOutputDisplayArea(outputLines);
+                    resetDisplays();
+                    
+                    currentDisplay = (getOldDisplay1());
+                    setDisplay1 (currentDisplay);
+                    setStrOperator (getStrOldOperator());
+                    setDisplay2(getOldDisplay2());
+                    equl();
+                }
+                // Everything in this method past this point may be unnecesary...  
+                // I will do some tests!
+                else
+                {
+                    // If edit Mode was entered as a completed equation
+                    // and then an operator was added to the last index
+                    // This is no longer a complete equation
+                    setOutputDisplayArea(outputLines);
+                    resetDisplays();
+                                        
+                }
+            }
+            else
+            {
+                
+                setOutputDisplayArea(outputLines);
+                resetDisplays();
 
-        currentDisplay = (getOldDisplay1());
-        setDisplay1 (currentDisplay);
-        setStrOperator (getStrOldOperator());
-        setDisplay2(outputLines.get(endIndex).getComments());
-
-        // DEBUG Output
-        //System.out.println("New Entry DP1: " + getDisplay1());
-        //System.out.println("New Entry DP2: " + getDisplay2());
-        //System.out.println("New Entry OP: " + getStrOperator());
-
+            }
+            
+        }
     }
  
      // Equl is the only way to apply the operator to the operands
@@ -738,6 +988,7 @@ public class Controls
      // After the operation, completEquation is set to false
      public void equl()
      {
+         dblClear=false;
          // Equl uses the Expression class in Towel jar;
          // Expression can convert a string equation into a Double result
          // Equl not allowed in edit mode
@@ -756,7 +1007,7 @@ public class Controls
 
             setStrEquation(outputLines);
 
-
+            // This 
             Expression exp = new Expression(getStrEquation());
             setResult(exp.resolve());
             strResult = String.valueOf(getResult());
@@ -776,11 +1027,13 @@ public class Controls
      
     public void saveIt()
     {
+        dblClear=false;
         
     }
     
     public void loadIt()
-    {    // Currently, this does not work and throws an error. It is my first attpempt to LOAD a text file.
+    {
+        dblClear=false;
         try 
         {
             FacesContext.getCurrentInstance().getExternalContext().redirect("/CalcTab.txt");
