@@ -29,117 +29,122 @@
             <h:outputText value="&lt;br/&gt;" escape="false" />
 
             <h:form>
-                <h:panelGrid columns="2" border="1">
-                    <h:panelGroup class="panel panel-info"> 
-                        <h:panelGrid columns="1" cellpadding="2" border="1" >                   
-                            <h:panelGroup>
-                                <h:outputText value="operand:"/>
-                                <b:inputText id="display1InputText" size="40"
-                                         style="text-align: right" 
-                                         readonly="true"
-                                         value="#{controls.display1}">
-                                    <f:facet name="prepend">
-                                        <h:outputText value="#" />
-                                    </f:facet>
-                                </b:inputText>
-                                <h:outputText value="comment:"/>
-                                <b:inputText id="display2InputText" size="40"
-                                         style="text-align: right"
-                                         readonly="false"
-                                         value="#{controls.display2}">
-                                    <f:facet name="prepend">
-                                        <h:outputText value=">" />
-                                    </f:facet>
-                                </b:inputText>                          
-                            </h:panelGroup>            
-                            <h:panelGroup>
-                                <h:commandButton value="Del" style="width:40px;"
-                                                 action ="#{controls.del}"/>
-                                <h:commandButton value="Clr" style="width:40px;"
-                                                  action ="#{controls.clear}"/>
-                                <h:commandButton value="ClrAll" style="width:40px;"
-                                                  action ="#{controls.clearAll}"/>
-                                <h:commandButton value="+/-" style="width:40px;"
-                                                 action ="#{controls.flip}"/>
-                                <h:commandButton value="UP" style="width:40px;"
-                                                 action ="#{controls.moveUp}"/>                        
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:commandButton value="7" style="width:40px;"
-                                                 action ="#{controls.seven}"/>
-                                <h:commandButton value="8" style="width:40px;"
-                                                 action ="#{controls.eight}"/>
-                                <h:commandButton value="9" style="width:40px;"
-                                                action ="#{controls.nine}"/>
-                                <h:commandButton value="+" style="width:40px;"
-                                                 action ="#{controls.add}"/>
-                                <h:commandButton value="DN" style="width:40px;"
-                                                 action ="#{controls.moveDown}"/>                            
-
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:commandButton value="4" style="width:40px;"
-                                                 action ="#{controls.four}"/>
-                                <h:commandButton value="5" style="width:40px;"
-                                                  action ="#{controls.five}"/>
-                                <h:commandButton value="6" style="width:40px;"
-                                                 action ="#{controls.six}"/>
-                                <h:commandButton value="-" style="width:40px;"
-                                                action ="#{controls.subtract}"/>
-                                <h:commandButton value="SV" style="width:40px;"
-                                                 action ="#{controls.saveIt}"/>
-                                <!-- JSF -->
-                                <!-- h:outputLink value="file/foo.exe">
-                                download foo.exe</h:outputLink -->
-                                <!--h:outputLink value="file/CalcTab.txt">
-                                                    SV</h:outputLink-->
-
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:commandButton value="1" style="width:40px;"
-                                                 action ="#{controls.one}"/>
-                                <h:commandButton value="2" style="width:40px;"
-                                                 action ="#{controls.two}"/>
-                                <h:commandButton value="3" style="width:40px;"
-                                                 action ="#{controls.three}" 
-                                                 accesskey="3"/>
-                                <h:commandButton value="*" style="width:40px;"
-                                                 action ="#{controls.multiply}"/>
-                                <h:commandButton value="LD" style="width:40px;"
-                                                  action ="#{controls.loadIt}"/>
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:commandButton value="0" style="width:40px;"
-                                                 action ="#{controls.zero}"/>
-                                <h:commandButton value="." style="width:40px;"
-                                                  action ="#{controls.decim}"/>
-                                <h:commandButton value="=" style="width:40px;"
-                                                 action ="#{controls.equl}"/>
-                                <h:commandButton value="/" style="width:40px;"
-                                                 action ="#{controls.divide}"/>
-                                <h:commandButton value="NE" style="width:40px;"
-                                                  action ="#{controls.newEntry}"/>
-
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:inputText id="displayMessageText" size ="20"
-                                         style="text-align: left" 
-                                         readonly="true"
-                                         value="#{controls.message}"/>
-                            </h:panelGroup>
-                        </h:panelGrid>                    
-                    </h:panelGroup>  
-
-                    <h:panelGroup>
-                        <h:inputTextarea cols="100" 
-                                         id="outputDisplayArea" 
-                                         readonly="true" 
-                                         rows="15"  
-                                         label="Tabulation" 
-                                         value="#{controls.outputDisplayArea}"/>
-
-                    </h:panelGroup>
-                </h:panelGrid>
+                    <h:panelGrid columns="2" border="1">
+                        <h:panelGroup class="panel panel-info"> 
+                            <h:panelGrid columns="1" cellpadding="2" border="1" >                   
+                                <h:panelGroup>
+                                    <h:outputText value="operand:"/>
+                                    <b:inputText id="display1InputText" size="40"
+                                             style="text-align: right" 
+                                             readonly="true"
+                                             value="#{controls.display1}">
+                                        <f:facet name="prepend">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                    </b:inputText>
+                                    <h:outputText value="comment:"/>
+                                    <b:inputText id="display2InputText" size="40"
+                                             style="text-align: right"
+                                             readonly="false"
+                                             value="#{controls.display2}">
+                                        <f:facet name="prepend">
+                                            <h:outputText value=">" />
+                                        </f:facet>
+                                    </b:inputText>                          
+                                </h:panelGroup>            
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <b:commandButton value="Del" style="width:64px;"
+                                                         action ="#{controls.del}"/>
+                                        <b:commandButton value="Clr" style="width:64px;"
+                                                          action ="#{controls.clear}"/>
+                                        <b:commandButton value="ClrAll" style="width:64px;"
+                                                          action ="#{controls.clearAll}"/>
+                                        <b:commandButton value="+/-" style="width:64px;"
+                                                         action ="#{controls.flip}"/>
+                                        <b:commandButton value="UP" style="width:64px;"
+                                                     action ="#{controls.moveUp}"/>                        
+                                    </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <h:commandButton value="7" style="width:64px;"
+                                                         action ="#{controls.seven}"/>
+                                        <h:commandButton value="8" style="width:64px;"
+                                                         action ="#{controls.eight}"/>
+                                        <h:commandButton value="9" style="width:64px;"
+                                                        action ="#{controls.nine}"/>
+                                        <h:commandButton value="+" style="width:64px;"
+                                                         action ="#{controls.add}"/>
+                                        <h:commandButton value="DN" style="width:64px;"
+                                                         action ="#{controls.moveDown}"/>                            
+                                    </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <h:commandButton value="4" style="width:64px;"
+                                                         action ="#{controls.four}"/>
+                                        <h:commandButton value="5" style="width:64px;"
+                                                          action ="#{controls.five}"/>
+                                        <h:commandButton value="6" style="width:64px;"
+                                                         action ="#{controls.six}"/>
+                                        <h:commandButton value="-" style="width:64px;"
+                                                        action ="#{controls.subtract}"/>
+                                        <h:commandButton value="SV" style="width:64px;"
+                                                         action ="#{controls.saveIt}"/>
+                                    </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <h:commandButton value="1" style="width:64px;"
+                                                         action ="#{controls.one}"/>
+                                        <h:commandButton value="2" style="width:64px;"
+                                                         action ="#{controls.two}"/>
+                                        <h:commandButton value="3" style="width:64px;"
+                                                         action ="#{controls.three}" 
+                                                         accesskey="3"/>
+                                        <h:commandButton value="*" style="width:64px;"
+                                                         action ="#{controls.multiply}"/>
+                                        <h:commandButton value="LD" style="width:64px;"
+                                                          action ="#{controls.loadIt}"/>
+                                    </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <h:commandButton value="0" style="width:64px;"
+                                                         action ="#{controls.zero}"/>
+                                        <h:commandButton value="." style="width:64px;"
+                                                          action ="#{controls.decim}"/>
+                                        <h:commandButton value="=" style="width:64px;"
+                                                         action ="#{controls.equl}"/>
+                                        <h:commandButton value="/" style="width:64px;"
+                                                         action ="#{controls.divide}"/>
+                                        <h:commandButton value="NE" style="width:64px;"
+                                                          action ="#{controls.newEntry}"/>
+                                    </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:outputText value="message:"/>
+                                    <b:inputText id="displayMessageText" size ="40"
+                                             style="text-align: left" 
+                                             readonly="true"
+                                             value="#{controls.message}">
+                                        <f:facet name="prepend">
+                                            <h:outputText value=">" />
+                                        </f:facet>
+                                    </b:inputText>
+                                </h:panelGroup>
+                            </h:panelGrid>                    
+                        </h:panelGroup>  
+                        <h:panelGroup>
+                            <h:inputTextarea cols="100"  
+                                             id="outputDisplayArea" 
+                                             readonly="true" 
+                                             rows="15"  
+                                             label="Tabulation" 
+                                             value="#{controls.outputDisplayArea}"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
             </h:form>        
         </div>
     </h:body>
