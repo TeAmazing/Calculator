@@ -9,7 +9,7 @@
     <title>Calculator</title>
   </h:head>
     <h:body >
-        <div id="j_idt40" class="container">
+        <div id="body_div" class="container">
             <h:outputText value="* Project - JSF Tabulating Calculator"/>
             <h:outputText value="&lt;br/&gt;" escape="false" />
             <h:outputText value="* Class: CMSC 495 Current Trends and Projects in Computer Science"/>
@@ -28,20 +28,21 @@
             <h:outputText value="&lt;br/&gt;" escape="false" />
             <h:outputText value="&lt;br/&gt;" escape="false" />
 
-            <h:form>
+            <h:form id="calcView">
                     <h:panelGrid columns="2" border="1">
                         <h:panelGroup class="panel panel-info"> 
                             <h:panelGrid columns="1" cellpadding="2" border="1" >                   
                                 <h:panelGroup>
                                     <h:outputText value="operand:"/>
-                                    <b:inputText id="display1InputText" size="40"
-                                             style="text-align: right" 
-                                             readonly="true"
-                                             value="#{controls.display1}">
+                                    <br/>                                    
+                                    <h:outputText id="display1OutputText"
+                                                  style="float:right"                                             
+                                                  value="#{controls.display1}">
                                         <f:facet name="prepend">
                                             <h:outputText value="#" />
                                         </f:facet>
-                                    </b:inputText>
+                                    </h:outputText>
+                                    <br/>
                                     <h:outputText value="comment:"/>
                                     <b:inputText id="display2InputText" size="40"
                                              style="text-align: right"
@@ -50,77 +51,142 @@
                                         <f:facet name="prepend">
                                             <h:outputText value=">" />
                                         </f:facet>
-                                    </b:inputText>                          
+                                    </b:inputText> 
                                 </h:panelGroup>            
                                 <h:panelGroup>
                                     <h:panelGrid columns="5" cellpadding="10">
-                                        <b:commandButton value="Del" style="width:64px;"
-                                                         action ="#{controls.del}"/>
-                                        <b:commandButton value="Clr" style="width:64px;"
-                                                          action ="#{controls.clear}"/>
-                                        <b:commandButton value="ClrAll" style="width:64px;"
-                                                          action ="#{controls.clearAll}"/>
-                                        <b:commandButton value="+/-" style="width:64px;"
-                                                         action ="#{controls.flip}"/>
-                                        <b:commandButton value="UP" style="width:64px;"
-                                                     action ="#{controls.moveUp}"/>                        
+                                        <b:commandButton id="btn_Del" value="Del" style="width:64px;"
+                                                         look="warning" action ="#{controls.del()}">
+                                            <f:ajax execute="calcView:btn_Del calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_Clr" value="Clr" style="width:64px;"
+                                                          look="warning" action ="#{controls.clear()}">
+                                            <f:ajax execute="calcView:btn_Clr calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_ClrAll" value="ClrAll" style="width:64px;"
+                                                          look="warning" action ="#{controls.clearAll()}">
+                                            <f:ajax execute="calcView:btn_ClrAll calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_Flip" value="+/-" style="width:64px;"
+                                                         look="primary" action ="#{controls.flip()}">
+                                            <f:ajax execute="calcView:btn_Flip calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_MUp" value="UP" style="width:64px;"
+                                                        look="info" action ="#{controls.moveUp()}"/>                        
                                     </h:panelGrid>                                
                                 </h:panelGroup>
                                 <h:panelGroup>
                                     <h:panelGrid columns="5" cellpadding="10">
-                                        <h:commandButton value="7" style="width:64px;"
-                                                         action ="#{controls.seven}"/>
-                                        <h:commandButton value="8" style="width:64px;"
-                                                         action ="#{controls.eight}"/>
-                                        <h:commandButton value="9" style="width:64px;"
-                                                        action ="#{controls.nine}"/>
-                                        <h:commandButton value="+" style="width:64px;"
-                                                         action ="#{controls.add}"/>
-                                        <h:commandButton value="DN" style="width:64px;"
-                                                         action ="#{controls.moveDown}"/>                            
+                                        <h:commandButton id="btn_7" value="7" style="width:64px;"
+                                                         action ="#{controls.seven()}">
+                                            <f:ajax execute="calcView:btn_7 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_8" value="8" style="width:64px;"
+                                                         action ="#{controls.eight()}">
+                                            <f:ajax execute="calcView:btn_8 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_9" value="9" style="width:64px;"
+                                                        action ="#{controls.nine()}">
+                                            <f:ajax execute="calcView:btn_9 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <b:commandButton id="btn_Add" value="+" style="width:64px;"
+                                                         look="primary" action ="#{controls.add()}">
+                                            <f:ajax execute="calcView:btn_Add calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_MDn" value="DN" style="width:64px;"
+                                                         look="info" action ="#{controls.moveDown()}">
+                                            <f:ajax execute="calcView:btn_MDn calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>                            
                                     </h:panelGrid>                                
                                 </h:panelGroup>
                                 <h:panelGroup>
                                     <h:panelGrid columns="5" cellpadding="10">
-                                        <h:commandButton value="4" style="width:64px;"
-                                                         action ="#{controls.four}"/>
-                                        <h:commandButton value="5" style="width:64px;"
-                                                          action ="#{controls.five}"/>
-                                        <h:commandButton value="6" style="width:64px;"
-                                                         action ="#{controls.six}"/>
-                                        <h:commandButton value="-" style="width:64px;"
-                                                        action ="#{controls.subtract}"/>
-                                        <h:commandButton value="SV" style="width:64px;"
-                                                         action ="#{controls.saveIt}"/>
+                                        <h:commandButton id="btn_4" value="4" style="width:64px;"
+                                                         action ="#{controls.four()}">
+                                            <f:ajax execute="calcView:btn_4 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_5" value="5" style="width:64px;"
+                                                          action ="#{controls.five()}">
+                                            <f:ajax execute="calcView:btn_5 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_6" value="6" style="width:64px;"
+                                                         action ="#{controls.six()}">
+                                            <f:ajax execute="calcView:btn_6 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <b:commandButton id="btn_Sub" value="-" style="width:64px;"
+                                                        look="primary" action ="#{controls.subtract()}">
+                                            <f:ajax execute="calcView:btn_Sub calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_NewEntry" value="NE" style="width:64px;"
+                                                          look="info" action ="#{controls.newEntry()}">
+                                            <f:ajax execute="calcView:btn_NewEntry calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                     </h:panelGrid>                                
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <h:panelGrid columns="5" cellpadding="10">
+                                        <h:commandButton id="btn_1" value="1" style="width:64px;"
+                                                         action ="#{controls.one()}">
+                                            <f:ajax execute="calcView:btn_1 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_2" value="2" style="width:64px;"
+                                                         action ="#{controls.two()}">
+                                            <f:ajax execute="calcView:btn_2 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_3" value="3" style="width:64px;"
+                                                         action ="#{controls.three()}">
+                                            <f:ajax execute="calcView:btn_3 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <b:commandButton id="btn_Mult" value="*" style="width:64px;"
+                                                         look="primary" action ="#{controls.multiply()}">
+                                            <f:ajax execute="calcView:btn_Mult calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                       <b:commandButton id="btn_Save" value="SV" style="width:64px;"
+                                                         look="info" action ="#{controls.saveIt()}"/>
                                     </h:panelGrid>                                
                                 </h:panelGroup>
                                 <h:panelGroup>
                                     <h:panelGrid columns="5" cellpadding="10">
-                                        <h:commandButton value="1" style="width:64px;"
-                                                         action ="#{controls.one}"/>
-                                        <h:commandButton value="2" style="width:64px;"
-                                                         action ="#{controls.two}"/>
-                                        <h:commandButton value="3" style="width:64px;"
-                                                         action ="#{controls.three}" 
-                                                         accesskey="3"/>
-                                        <h:commandButton value="*" style="width:64px;"
-                                                         action ="#{controls.multiply}"/>
-                                        <h:commandButton value="LD" style="width:64px;"
-                                                          action ="#{controls.loadIt}"/>
-                                    </h:panelGrid>                                
-                                </h:panelGroup>
-                                <h:panelGroup>
-                                    <h:panelGrid columns="5" cellpadding="10">
-                                        <h:commandButton value="0" style="width:64px;"
-                                                         action ="#{controls.zero}"/>
-                                        <h:commandButton value="." style="width:64px;"
-                                                          action ="#{controls.decim}"/>
-                                        <h:commandButton value="=" style="width:64px;"
-                                                         action ="#{controls.equl}"/>
-                                        <h:commandButton value="/" style="width:64px;"
-                                                         action ="#{controls.divide}"/>
-                                        <h:commandButton value="NE" style="width:64px;"
-                                                          action ="#{controls.newEntry}"/>
+                                        <h:commandButton id="btn_0" value="0" style="width:64px;"
+                                                         action ="#{controls.zero()}">
+                                            <f:ajax execute="calcView:btn_0 calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <h:commandButton id="btn_Dec" value="." style="width:64px;"
+                                                          action ="#{controls.decim()}">
+                                            <f:ajax execute="calcView:btn_Dec calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </h:commandButton>
+                                        <b:commandButton id="btn_Equl" value="=" style="width:64px;"
+                                                         look="success" action ="#{controls.equl()}">
+                                            <f:ajax execute="calcView:btn_Equl calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_Div" value="/" style="width:64px;"
+                                                         look="primary" action ="#{controls.divide()}">
+                                            <f:ajax execute="calcView:btn_Div calcView:display1OutputText"
+                                                    render="calcView:display1OutputText calcView:outputDisplayArea" />
+                                        </b:commandButton>
+                                        <b:commandButton id="btn_Load" value="LD" style="width:64px;"
+                                                          look="info" action ="#{controls.loadIt()}"/>
                                     </h:panelGrid>                                
                                 </h:panelGroup>
                                 <h:panelGroup>
