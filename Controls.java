@@ -28,6 +28,7 @@ import java.util.Arrays; // The Arrays Library
 import JustJava.InputLine;
 import com.towel.math.Expression;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
@@ -42,7 +43,7 @@ import javax.faces.context.FacesContext;
  */
 @ManagedBean
 @ViewScoped
-public class Controls 
+public class Controls implements Serializable 
 {
 
     // Variable Declarations;
@@ -326,6 +327,17 @@ public class Controls
 
          currentDisplay = deleteString(currentDisplay);
          setDisplay1(currentDisplay);
+         // In edit Mode all changes will reflect in the outputDisplay Pane
+         if (editMode)
+         {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+            setOutputDisplayArea(outputLines);            
+            if ((stepIndex==endIndex) && (completEquation))
+            {
+                setOldDisplay1(outputLines.get(endIndex).getOperand());
+            }
+         }
      }
 
      // Clear display; Reset the operator
@@ -457,7 +469,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -484,7 +496,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -510,7 +522,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -537,7 +549,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -562,7 +574,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -588,7 +600,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -614,7 +626,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -640,7 +652,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -666,7 +678,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -690,7 +702,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -718,7 +730,7 @@ public class Controls
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
             setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay1(outputLines.get(endIndex).getOperand());
             }
@@ -895,7 +907,7 @@ public class Controls
         {
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay2(outputLines.get(endIndex).getComments());
                 
@@ -918,7 +930,7 @@ public class Controls
          {
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
             outputLines.set(stepIndex, totalEntry);
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
+            if ((stepIndex==endIndex) && (completEquation))
             {
                 setOldDisplay2(outputLines.get(endIndex).getComments());
                 
