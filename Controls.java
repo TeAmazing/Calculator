@@ -14,7 +14,7 @@
 */
 
 
-package Beans;
+package com.teamazing.beans;
 
 
 import javax.faces.bean.ManagedBean;
@@ -25,7 +25,7 @@ import java.util.ArrayList; // The ArrayList library
 import java.util.Iterator; // The Iterator Library
 import java.util.Arrays; // The Arrays Library
 
-import JustJava.InputLine;
+import com.teamazing.backingbeans.InputLine;
 import com.towel.math.Expression;
 import java.io.IOException;
 import java.io.Serializable;
@@ -1043,17 +1043,9 @@ public class Controls implements Serializable
         
     }
     
-    public void loadIt()
+    public String loadIt()
     {
-        dblClear=false;
-        try 
-        {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/CalcTab.txt");
-        } 
-        catch (IOException ex) 
-        {
-            Logger.getLogger(Controls.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        return "loadIt";
     }
 
 }
