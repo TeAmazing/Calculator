@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Load Calculation</title>
+</h:head>
+<h:body>
+	<h3>TeAmazing | File Upload</h3>
+    <!-- Form enctype should be multipart/form-data -->
+	<h:form id="loadForm" enctype="multipart/form-data">
+
+       <!-- inputFile tag to upload file -->
+		Upload File 
+		<h:inputFile id="file" 
+		             label="file"
+			         value="#{loader.part}" 
+			         required="true" 
+			         requiredMessage="File not selected !!">
+            <!-- FileUploadValidator for file validation -->
+		    <f:validator validatorId="FileUploadValidator" />
+		</h:inputFile>
+		<h:message style="color: red" for="file" /><br />
+
+		<h:commandButton id="submit" 
+		                 action="#{loader.uploadFile}"
+			             value="upload file" /><br />
+
+        <!-- status message of file upload; rendered if message is set -->
+		<h:outputText value="#{loader.statusMessage}"
+			          rendered="#{not empty loader.statusMessage}" />
+	</h:form>
+</h:body>
+</html>
