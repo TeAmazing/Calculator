@@ -18,8 +18,9 @@ package com.teamazing.beans;
 
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import java.util.ArrayList; // The ArrayList library
 import java.util.Iterator; // The Iterator Library
@@ -31,7 +32,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
+
 
 //import Beans.OutputDisplay;
 
@@ -42,7 +43,7 @@ import javax.faces.context.FacesContext;
  * The ViewScoped allows persistent variable values
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class Controls implements Serializable 
 {
 
@@ -318,7 +319,36 @@ public class Controls implements Serializable
         
     }
     
+    public void refeshEditDisplay()
+    {
+        InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+        outputLines.set(stepIndex, totalEntry);
+        setOutputDisplayArea(outputLines);            
+        if ((stepIndex==endIndex) && (completEquation))
+        {
+            setOldDisplay1(outputLines.get(endIndex).getOperand());
+        }        
+    }
     
+    public void updateOperandNormalDisplay()
+    {
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.add(totalEntry);
+
+            setOutputDisplayArea(outputLines);
+
+            resetDisplays();
+    }
+    
+    public void updateOperandEditDisplay()
+    {
+            // If in edit mode commit changes to arraylist and display them
+            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+            outputLines.set(stepIndex, totalEntry);
+
+            setOutputDisplayArea(outputLines);            
+    }
+            
 // ---------------------------------------------
 //   Methods below are calculator key methods    
     public void del()
@@ -436,16 +466,7 @@ public class Controls implements Serializable
          }
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);    
-            if ((stepIndex==endIndex) && (outputLines.get(endIndex).getOperator().equals("")))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-          }
-         
+             refeshEditDisplay();         
      }
 
      // All number buttons check for leading zero; empty(ness)
@@ -465,16 +486,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-         
+             refeshEditDisplay();         
      }
 
      public void eight()
@@ -492,15 +504,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-        }
+             refeshEditDisplay();         
 
      }
 
@@ -518,17 +522,7 @@ public class Controls implements Serializable
          
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-        }
-         
-
+             refeshEditDisplay();         
      }
 
       public void six()
@@ -545,15 +539,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
+             refeshEditDisplay();         
      }
 
      public void five()
@@ -570,16 +556,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-
+             refeshEditDisplay();         
      }
 
      public void four()
@@ -596,16 +573,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-
+             refeshEditDisplay();         
      }
 
      public void three()
@@ -622,16 +590,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-         
+             refeshEditDisplay();         
      }
 
      public void two()
@@ -648,16 +607,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-         
+             refeshEditDisplay();         
      }
 
      public void one()
@@ -673,17 +623,8 @@ public class Controls implements Serializable
           setDisplay1(currentDisplay);
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
-        if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-
+         if (editMode)
+             refeshEditDisplay();         
      }
 
      public void zero()
@@ -698,16 +639,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-        }
-         
+             refeshEditDisplay();         
      }
 
      // Add a decimal only if no decimal is in the string
@@ -726,16 +658,7 @@ public class Controls implements Serializable
 
          // In edit Mode all changes will reflect in the outputDisplay Pane
          if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            setOutputDisplayArea(outputLines);            
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay1(outputLines.get(endIndex).getOperand());
-            }
-         }
-
+             refeshEditDisplay();         
      }
 
      //The operator buttons move the operand  to 
@@ -755,25 +678,9 @@ public class Controls implements Serializable
         setStrOperator("+"); //ADD
         
         if (!editMode)
-        {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.add(totalEntry);
-
-            setOutputDisplayArea(outputLines);
-            // ??? Is this necessary
-            // setStrEquation(outputLines);
-
-            resetDisplays();
-        }
+            updateOperandNormalDisplay();
         else
-        {
-            // If in edit mode commit changes to arraylist and display them
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-
-            setOutputDisplayArea(outputLines);            
-        }
-
+            updateOperandEditDisplay();
      }
 
      public void subtract() 
@@ -790,25 +697,9 @@ public class Controls implements Serializable
         setStrOperator("-"); //SUBTRACT
         
         if (!editMode)
-        {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.add(totalEntry);
-
-            setOutputDisplayArea(outputLines);
-            // ??? Is this necessary
-            // setStrEquation(outputLines);
-        
-            resetDisplays();
-            
-        }
+            updateOperandNormalDisplay();
         else
-        {
-            // If in edit mode commit changes to arraylist and display them
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-
-            setOutputDisplayArea(outputLines);            
-        }
+            updateOperandEditDisplay();
 
      }
 
@@ -826,25 +717,9 @@ public class Controls implements Serializable
         setStrOperator("*"); //MULTIPLY
         
         if (!editMode)
-        {
-            // If in edit mode commit changes to arraylist and display them
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.add(totalEntry);
-
-            setOutputDisplayArea(outputLines);
-            // ??? Is this necessary
-            // setStrEquation(outputLines);
-            resetDisplays();
-            
-        }
+            updateOperandNormalDisplay();
         else
-        {
-            // If in edit mode commit changes to arraylist and display them
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-
-            setOutputDisplayArea(outputLines);            
-        }
+            updateOperandEditDisplay();
 
      }
 
@@ -862,23 +737,9 @@ public class Controls implements Serializable
         
         // The check divide by zero is not in effect yet!!
         if (!editMode)
-        {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.add(totalEntry);
-
-            setOutputDisplayArea(outputLines);
-            // ??? Is this necessary
-           // setStrEquation(outputLines);
-            resetDisplays();
-        }
+            updateOperandNormalDisplay();
         else
-        {
-            // If in edit mode commit changes to arraylist and display them
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-
-            setOutputDisplayArea(outputLines);            
-        }
+            updateOperandEditDisplay();
 
      }
      
@@ -903,47 +764,55 @@ public class Controls implements Serializable
      public void moveUp()
      {
          dblClear=false;
-        if (editMode)
+        if (!outputLines.isEmpty())
         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            if ((stepIndex==endIndex) && (completEquation))
+            if (editMode)
             {
-                setOldDisplay2(outputLines.get(endIndex).getComments());
-                
+                InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+                outputLines.set(stepIndex, totalEntry);
+                if ((stepIndex==endIndex) && (completEquation))
+                {
+                    setOldDisplay2(outputLines.get(endIndex).getComments());
+
+                }
+
+                if (stepIndex >0)
+                     stepIndex--;
             }
 
-            if (stepIndex >0)
-                 stepIndex--;
+            resetDisplays();
+            editMode = true;
+            setOutputDisplayArea(outputLines);
         }
-
-        resetDisplays();
-        editMode = true;
-        setOutputDisplayArea(outputLines);
-            
+        else
+            editMode = false;
      }
      
      public void moveDown()
      {
         dblClear=false;
-        if (editMode)
-         {
-            InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-            outputLines.set(stepIndex, totalEntry);
-            if ((stepIndex==endIndex) && (completEquation))
-            {
-                setOldDisplay2(outputLines.get(endIndex).getComments());
-                
-            }
+        if (!outputLines.isEmpty())
+        {
+            if (editMode)
+             {
+                InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+                outputLines.set(stepIndex, totalEntry);
+                if ((stepIndex==endIndex) && (completEquation))
+                {
+                    setOldDisplay2(outputLines.get(endIndex).getComments());
 
-            if (stepIndex < endIndex)
-                stepIndex++;
-         }
-        
-         resetDisplays();
-         editMode = true;
-         setOutputDisplayArea(outputLines);
+                }
 
+                if (stepIndex < endIndex)
+                    stepIndex++;
+             }
+
+             resetDisplays();
+             editMode = true;
+             setOutputDisplayArea(outputLines);
+        }
+        else
+            editMode = false;
      }
      
      public void newEntry()
@@ -1045,6 +914,7 @@ public class Controls implements Serializable
     
     public String loadIt()
     {
+        
         return "loadIt";
     }
 
