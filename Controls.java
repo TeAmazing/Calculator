@@ -17,16 +17,15 @@
 package com.teamazing.beans;
 
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import javax.faces.context.FacesContext;
 
 import java.util.ArrayList; // The ArrayList library
-import java.util.Iterator; // The Iterator Library
-import java.util.Arrays; // The Arrays Library
 
-import com.teamazing.backingbeans.InputLine;
+import com.teamazing.modelbeans.InputLine;
+// I thought this was unnecessary with @ManagedProperty
+//import com.teamazing.backingbeans.Loader;
 import com.towel.math.Expression;
 import java.io.IOException;
 import java.io.Serializable;
@@ -42,13 +41,15 @@ import java.util.logging.Logger;
 /**
  * The ViewScoped allows persistent variable values
  */
-@ManagedBean
+@Named
 @SessionScoped
 public class Controls implements Serializable 
 {
 
     // Variable Declarations;
     @SuppressWarnings("FieldMayBeFinal")
+    private final Logger logger = Logger.getLogger(Controls.class.getName());
+    
     private String outputDisplayArea ;
     private ArrayList<InputLine> outputLines = new ArrayList<InputLine>();
     
@@ -73,7 +74,7 @@ public class Controls implements Serializable
     private int endIndex; // This holds the last position in the index
     
     // Constructor
-    public Controls() 
+    Controls() 
     {
         outputDisplayArea = "";
         currentDisplay = display1 = "0";
@@ -250,7 +251,7 @@ public class Controls implements Serializable
                 setDisplay2(tempDisplay2);
                 setStrOperator(tempOp);
                 setMessage(tempOp);
-                
+
             this.outputDisplayArea = "EDIT MODE" + "\r" + temp;            
             endIndex = fullDisplay.size()-1;
            
@@ -330,6 +331,29 @@ public class Controls implements Serializable
         }        
     }
     
+    public void movementProc()
+    {
+        InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
+        outputLines.set(stepIndex, totalEntry);
+        if ((stepIndex==endIndex) && (completEquation))
+        {
+            setOldDisplay2(outputLines.get(endIndex).getComments());
+
+        }
+    }
+    
+    public void equationReset()
+    {
+        dblClear=false;
+
+        if ((completEquation) && (!editMode))
+        {
+            setMessage("Equation Reset");
+            outputLines.clear();
+            completEquation = false;
+        }        
+    }
+    
     public void updateOperandNormalDisplay()
     {
             InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
@@ -348,7 +372,80 @@ public class Controls implements Serializable
 
             setOutputDisplayArea(outputLines);            
     }
+    
+    public void integrateLoad(ArrayList<InputLine>  fullDisplay)
+    {
+        clearAll();
+        
+        stepIndex = 0;
+        endIndex = fullDisplay.size()-1;
+        int x = 0; // DEBUG VARIABLE
+        System.out.println("~~~~~ Inside intLoad: fullDisplay Size = " + endIndex);
+        
+        // DEBUG
+        for(InputLine lineEntry : fullDisplay) 
+        {   
+            x++;
+            System.out.println("~~~~~ Operand @ "+x +": " + (lineEntry.getOperand()));
+            System.out.println("~~~~~ Operator = "+x +": " + (lineEntry.getOperator()));
+            System.out.println("~~~~~ Comments = "+x +": " + (lineEntry.getComments()));
+            System.out.println();
+        }
+        // END DEBUG
+        
+        // A completed equation can be determined by no operator being 
+        // in last index
+        if (fullDisplay.get(endIndex).getOperator().equals("="))
+        {
+            System.out.println("~~~~~ Inside intLoad: Found = @ endIndex");
             
+            currentDisplay = fullDisplay.get(endIndex).getOperand();
+            System.out.println("~~~~~ Inside intLoad @= curentDisplay:" + currentDisplay);
+            setDisplay1 (currentDisplay);
+            setStrOperator ("");
+            setDisplay2(fullDisplay.get(endIndex).getComments());
+
+            fullDisplay.remove(endIndex);
+            //DEBUG
+            x = 0;
+            for(InputLine lineEntry : fullDisplay) 
+            {   
+                x++;
+                System.out.println("~~~~~ lineEntry trimmed ~~~~~~~~~~~");
+                System.out.println("~~~~~ Operand @ "+x +": " + (lineEntry.getOperand()));
+                System.out.println("~~~~~ Operator = "+x +": " + (lineEntry.getOperator()));
+                System.out.println("~~~~~ Comments = "+x +": " + (lineEntry.getComments()));
+                System.out.println();
+            }
+            // END DEBUG
+            setOldDisplay1(getDisplay1());
+            setOldDisplay2(getDisplay2());            
+            setStrOldOperator(getStrOperator());
+            
+            outputLines = fullDisplay;
+            equl();
+        }
+        // Everything in this method past this point may be unnecesary...  
+        // I will do some tests!
+        else
+        {
+            System.out.println("~~~~~ Inside intLoad: No = @ endIndex");
+            // If edit Mode was entered as a completed equation
+            // and then an operator was added to the last index
+            // This is no longer a complete equation
+            outputLines = fullDisplay;
+            setOutputDisplayArea(fullDisplay);
+            resetDisplays();
+
+        }
+    }
+    public ArrayList<InputLine> saveLines()
+    {   
+        return outputLines;
+    }
+    
+// ---------------------------------------------    
+//############################################################################            
 // ---------------------------------------------
 //   Methods below are calculator key methods    
     public void del()
@@ -666,15 +763,8 @@ public class Controls implements Serializable
      //They also display the operator value in the message bar
      public void add() 
      {
-         dblClear=false;
         // If the previous calculation complete reset all
-        if ((completEquation) && (!editMode))
-        {
-            setMessage("Equation Reset");
-            outputLines.clear();
-            completEquation = false;
-        }
-                
+        equationReset() ;               
         setStrOperator("+"); //ADD
         
         if (!editMode)
@@ -685,15 +775,7 @@ public class Controls implements Serializable
 
      public void subtract() 
      {
-         dblClear=false;
-         
-        if ((completEquation)&& (!editMode))
-        {
-            setMessage("Equation Reset");
-            outputLines.clear();
-            completEquation = false;
-        }
-                
+        equationReset() ;               
         setStrOperator("-"); //SUBTRACT
         
         if (!editMode)
@@ -705,15 +787,7 @@ public class Controls implements Serializable
 
      public void multiply() 
      {
-         dblClear=false;
-         
-        if ((completEquation)&& (!editMode))
-        {
-            setMessage("Equation Reset");
-            outputLines.clear();
-            completEquation = false;
-        }
-                
+        equationReset() ;               
         setStrOperator("*"); //MULTIPLY
         
         if (!editMode)
@@ -725,14 +799,7 @@ public class Controls implements Serializable
 
      public void divide() 
      {
-         dblClear=false;
-        if ((completEquation)&& (!editMode))
-        {
-            setMessage("Equation Reset");
-            outputLines.clear();
-            completEquation = false;
-        }
-                
+        equationReset() ;               
         setStrOperator("/"); //DIVIDE
         
         // The check divide by zero is not in effect yet!!
@@ -768,14 +835,7 @@ public class Controls implements Serializable
         {
             if (editMode)
             {
-                InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-                outputLines.set(stepIndex, totalEntry);
-                if ((stepIndex==endIndex) && (completEquation))
-                {
-                    setOldDisplay2(outputLines.get(endIndex).getComments());
-
-                }
-
+                movementProc();
                 if (stepIndex >0)
                      stepIndex--;
             }
@@ -795,14 +855,7 @@ public class Controls implements Serializable
         {
             if (editMode)
              {
-                InputLine totalEntry = new InputLine(getDisplay1(),getStrOperator(),getDisplay2());
-                outputLines.set(stepIndex, totalEntry);
-                if ((stepIndex==endIndex) && (completEquation))
-                {
-                    setOldDisplay2(outputLines.get(endIndex).getComments());
-
-                }
-
+                movementProc();
                 if (stepIndex < endIndex)
                     stepIndex++;
              }
@@ -909,6 +962,7 @@ public class Controls implements Serializable
     public void saveIt()
     {
         dblClear=false;
+        
         
     }
     
